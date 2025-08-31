@@ -5,6 +5,9 @@ on:
     - cron: "*/30 * * * *"  # 30分ごと
   workflow_dispatch:
 
+permissions:
+  contents: write   # ← ★これを追加
+
 jobs:
   rss:
     runs-on: ubuntu-latest
