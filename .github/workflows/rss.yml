@@ -27,11 +27,8 @@ jobs:
       - name: Validate JSON
         run: node validator.js
 
-      - name: Run script (with retry)
-        run: |
-          for i in 1 2 3; do
-            node index.js && break || sleep 10
-          done
+      - name: Run script
+        run: node index.js   # ← リトライ外してシンプルに実行
 
       - name: Commit updates
         run: |
