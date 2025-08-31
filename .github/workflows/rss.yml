@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # ← ★これを追加
+  contents: write   # ← push 権限を付与
 
 jobs:
   rss:
@@ -20,6 +20,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Validate JSON
         run: node validator.js
