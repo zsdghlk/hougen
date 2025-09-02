@@ -2,8 +2,8 @@ name: Post dialect to X
 
 on:
   schedule:
-    - cron: "*/30 * * * *" # 30分ごと
-  workflow_dispatch:
+    - cron: "*/30 * * * *"   # 30分ごと（UTC基準）
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -14,28 +14,56 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run bot
+      # ▼ 1) 会話文を生成＆在庫を移動（generate_and_move.js を同リポジトリに置く）
+      - name: Generate post & move item
+        id: gen
+        run: |
+          node generate_and_move.js > post.txt
+          echo "POST_BODY<<'EOF'" >> $GITHUB_OUTPUT
+          cat post.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      # ▼ 2) X 投稿（index.js が POST_BODY 環境変数を受けて投稿する想定）
+      - name: Run bot (post to X)
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-        run: node index.js
+          POST_BODY: ${{ steps.gen.outputs.POST_BODY }}
+        run: |
+          if [ -z "$POST_BODY" ]; then
+            echo "No POST_BODY generated. Skip posting."
+            exit 1
+          fi
+          node index.js
 
-      - name: Commit logs
+      # ▼ 3) 変更をコミット（dialectsの削除・postedへの移動を履歴化）
+      - name: Commit moved/posted changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add last.json log.json
-          git commit -m "Update logs" || echo "No changes"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
+          git add -A
+          git diff --staged --quiet || git commit -m "move posted items & logs"
+          git push
+
+      # ▼ 4) ログファイルのコミット（必要なら分離）
+      - name: Commit logs (optional)
+        continue-on-error: true
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add last.json log.json || true
+          git diff --staged --quiet || git commit -m "Update logs"
+          git push
