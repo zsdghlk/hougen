@@ -1,15 +1,15 @@
-name: Update RSS for Dialect Bot
+name: Post dialect to X
 
 on:
   schedule:
-    - cron: "*/30 * * * *"  # 30分ごと
+    - cron: "*/30 * * * *"   # 30分ごと
   workflow_dispatch:
 
 permissions:
-  contents: write   # ← push 権限を付与
+  contents: write
 
 jobs:
-  rss:
+  post:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,16 +24,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Validate JSON
-        run: node validator.js
+      - name: Run bot
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: node index.js
 
-      - name: Run script
-        run: node index.js   # ← リトライ外してシンプルに実行
-
-      - name: Commit updates
+      - name: Commit logs
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add posts.xml last.json log.json
-          git commit -m "Update RSS feed" || echo "No changes"
-          git push
+          git add last.json log.json || true
+          git commit -m "Update logs" || echo "No changes"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
