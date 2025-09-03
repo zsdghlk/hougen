@@ -55,7 +55,7 @@ jobs:
             echo "No POST_BODY generated. Skip posting."
             exit 1
           fi
-          node index.js
+          node index.mjs
 
       # 3) 在庫移動などの変更をコミット
       - name: Commit moved/posted changes
