@@ -1,19 +1,8 @@
 name: Post dialect to X
 
-jobs:
-  post:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    concurrency:
-      group: dialect-post
-      cancel-in-progress: true
-    steps:
-      # （以降は今のままでOK）
-
-
 on:
   schedule:
-    - cron: "*/30 * * * *"   # 30分ごと（UTC基準）
+    - cron: "*/30 * * * *"   # 30分ごと（UTC）
   workflow_dispatch: {}
 
 permissions:
@@ -22,6 +11,10 @@ permissions:
 jobs:
   post:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: dialect-post
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repo
@@ -36,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # ▼ 1) 会話文を生成＆在庫を移動（generate_and_move.js を同リポジトリに置く）
+      # 1) 会話文を生成＆在庫を移動
       - name: Generate post & move item
         id: gen
         run: |
@@ -45,7 +38,7 @@ jobs:
           cat post.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      # ▼ 2) X 投稿（index.js が POST_BODY 環境変数を受けて投稿する想定）
+      # 2) X に投稿（index.js は POST_BODY を優先使用）
       - name: Run bot (post to X)
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
@@ -60,21 +53,11 @@ jobs:
           fi
           node index.js
 
-      # ▼ 3) 変更をコミット（dialectsの削除・postedへの移動を履歴化）
+      # 3) 在庫移動などの変更をコミット
       - name: Commit moved/posted changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
           git diff --staged --quiet || git commit -m "move posted items & logs"
-          git push
-
-      # ▼ 4) ログファイルのコミット（必要なら分離）
-      - name: Commit logs (optional)
-        continue-on-error: true
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add last.json log.json || true
-          git diff --staged --quiet || git commit -m "Update logs"
           git push
