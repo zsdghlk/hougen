@@ -2,7 +2,7 @@ name: Post dialect to X
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # 30分ごと（UTC基準）
+    - cron: "*/30 * * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -41,9 +41,12 @@ jobs:
             cat post.txt
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+          echo "Generated:"
+          cat post.txt
 
-      # 2) X に投稿（index.js は POST_BODY を優先使用）
+      # 2) X に投稿（index.mjs は process.env.POST_BODY を読む想定）
       - name: Run bot (post to X)
+        if: ${{ steps.gen.outputs.POST_BODY != '' }}
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
@@ -51,10 +54,20 @@ jobs:
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
           POST_BODY: ${{ steps.gen.outputs.POST_BODY }}
         run: |
-          if [ -z "$POST_BODY" ]; then
-            echo "No POST_BODY generated. Skip posting."
-            exit 1
-          fi
+          set -euo pipefail
+          node -e "
+            const { TwitterApi } = require('twitter-api-v2');
+            const client = new TwitterApi({
+              appKey: process.env.X_API_KEY,
+              appSecret: process.env.X_API_SECRET,
+              accessToken: process.env.X_ACCESS_TOKEN,
+              accessSecret: process.env.X_ACCESS_SECRET,
+            });
+            (async () => {
+              const me = await client.v2.me();
+              console.log('Posting as @' + me.data.username);
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
           node index.mjs
 
       # 3) 在庫移動などの変更をコミット
