@@ -10,11 +10,13 @@ permissions:
 
 jobs:
   post:
+  
     runs-on: ubuntu-latest
     timeout-minutes: 5
     concurrency:
-      group: dialect-post
+      group: dialect-post-${{ github.ref }}
       cancel-in-progress: true
+
 
     steps:
       - name: Checkout repo
