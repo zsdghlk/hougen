@@ -1,5 +1,16 @@
 name: Post dialect to X
 
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: dialect-post
+      cancel-in-progress: true
+    steps:
+      # （以降は今のままでOK）
+
+
 on:
   schedule:
     - cron: "*/30 * * * *"   # 30分ごと（UTC基準）
