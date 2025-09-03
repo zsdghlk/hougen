@@ -1,104 +1,507 @@
 [
-  { "word": "おっぺす", "meaning": "押す", "region": "北海道" },
-  { "word": "わや", "meaning": "めちゃくちゃ、だめ", "region": "北海道" },
-  { "word": "なまら", "meaning": "とても", "region": "北海道" },
-  { "word": "しゃっこい", "meaning": "冷たい", "region": "東北" },
-  { "word": "いずい", "meaning": "しっくりこない、違和感がある", "region": "東北" },
-  { "word": "けっぱれ", "meaning": "がんばれ", "region": "青森" },
-  { "word": "だっちゃ", "meaning": "〜だよ（語尾につける）", "region": "宮城" },
-  { "word": "あおなじみ", "meaning": "青あざ", "region": "秋田" },
-  { "word": "うるかす", "meaning": "水につけてふやかす", "region": "岩手" },
-  { "word": "こわい", "meaning": "疲れた", "region": "山形" },
-  { "word": "じょんだ", "meaning": "上手だ", "region": "青森" },
-  { "word": "だはんで", "meaning": "だから", "region": "青森" },
-  { "word": "おばんです", "meaning": "こんばんは", "region": "宮城" },
-  { "word": "ごじゃっぺ", "meaning": "でたらめ", "region": "茨城" },
-  { "word": "だいじ", "meaning": "大丈夫", "region": "栃木" },
-  { "word": "おっぺす", "meaning": "押す", "region": "福島" },
-  { "word": "いけず", "meaning": "意地悪", "region": "京都" },
-  { "word": "えらい", "meaning": "しんどい", "region": "関西" },
-  { "word": "なおす", "meaning": "片付ける", "region": "関西" },
-  { "word": "さら", "meaning": "新品", "region": "関西" },
-  { "word": "つきだす", "meaning": "追い出す", "region": "大阪" },
-  { "word": "ほんま", "meaning": "本当", "region": "関西" },
-  { "word": "めばちこ", "meaning": "ものもらい", "region": "大阪" },
-  { "word": "ちょける", "meaning": "ふざける", "region": "関西" },
-  { "word": "しゃあない", "meaning": "仕方ない", "region": "関西" },
-  { "word": "やにこい", "meaning": "しつこい", "region": "和歌山" },
-  { "word": "ねぶる", "meaning": "なめる", "region": "関西" },
-  { "word": "ちんちん", "meaning": "熱々", "region": "名古屋" },
-  { "word": "どえりゃあ", "meaning": "とても", "region": "名古屋" },
-  { "word": "たわけ", "meaning": "ばかもの", "region": "名古屋" },
-  { "word": "やっとかめ", "meaning": "ひさしぶり", "region": "名古屋" },
-  { "word": "机をつる", "meaning": "机を運ぶ", "region": "名古屋" },
-  { "word": "かしわ", "meaning": "鶏肉", "region": "名古屋" },
-  { "word": "おみゃあ", "meaning": "あなた", "region": "名古屋" },
-  { "word": "えらいこっちゃ", "meaning": "大変だ", "region": "関西" },
-  { "word": "だんだん", "meaning": "ありがとう", "region": "島根" },
-  { "word": "ぶち", "meaning": "とても", "region": "広島" },
-  { "word": "たいぎい", "meaning": "だるい、面倒", "region": "広島" },
-  { "word": "じゃけぇ", "meaning": "だから", "region": "広島" },
-  { "word": "ぶちしわい", "meaning": "しつこい", "region": "広島" },
-  { "word": "はぶてる", "meaning": "すねる", "region": "広島" },
-  { "word": "いけん", "meaning": "だめ", "region": "広島" },
-  { "word": "おおきに", "meaning": "ありがとう", "region": "京都" },
-  { "word": "とっとーと？", "meaning": "取ってるの？", "region": "福岡" },
-  { "word": "好いとう", "meaning": "好き", "region": "福岡" },
-  { "word": "なんしよーと？", "meaning": "何してるの？", "region": "福岡" },
-  { "word": "ばり", "meaning": "とても", "region": "福岡" },
-  { "word": "きなっせ", "meaning": "いらっしゃい", "region": "熊本" },
-  { "word": "よか", "meaning": "いい", "region": "福岡" },
-  { "word": "せからしか", "meaning": "うるさい", "region": "長崎" },
-  { "word": "どんくさい", "meaning": "のろい", "region": "九州" },
-  { "word": "しょわしない", "meaning": "落ち着かない", "region": "鹿児島" },
-  { "word": "わっぜ", "meaning": "とても", "region": "鹿児島" },
-  { "word": "ひだるい", "meaning": "お腹がすいた", "region": "鹿児島" },
-  { "word": "けん", "meaning": "だから", "region": "福岡" },
-  { "word": "しんけん", "meaning": "とても", "region": "大分" },
-  { "word": "よだきい", "meaning": "めんどうくさい", "region": "大分" },
-  { "word": "いぬ", "meaning": "帰る", "region": "九州" },
-  { "word": "あずましい", "meaning": "落ち着く", "region": "北海道" },
-  { "word": "まいど", "meaning": "こんにちは、ありがとう", "region": "関西" },
-  { "word": "ほんなら", "meaning": "それじゃあ", "region": "関西" },
-  { "word": "ちかっぱ", "meaning": "めいっぱい", "region": "福岡" },
-  { "word": "どんだんず", "meaning": "どうして", "region": "青森" },
-  { "word": "おだつ", "meaning": "調子に乗る", "region": "北海道" },
-  { "word": "つんつるてん", "meaning": "丈が短すぎる服", "region": "全国" },
-  { "word": "こてんぱん", "meaning": "徹底的にやられる", "region": "全国" },
-  { "word": "わっしょい", "meaning": "祭りのかけ声", "region": "全国" },
-  { "word": "ひゃっこい", "meaning": "冷たい", "region": "新潟" },
-  { "word": "おもしゃい", "meaning": "面白い", "region": "新潟" },
-  { "word": "あっぱとっぱ", "meaning": "でたらめ", "region": "熊本" },
-  { "word": "おおごと", "meaning": "大変", "region": "九州" },
-  { "word": "がばい", "meaning": "とても", "region": "佐賀" },
-  { "word": "わっぜか", "meaning": "すごい", "region": "鹿児島" },
-  { "word": "きびる", "meaning": "しばる", "region": "九州" },
-  { "word": "はよせんね", "meaning": "早くしなさい", "region": "福岡" },
-  { "word": "ちゃちゃ入れる", "meaning": "横から口出しする", "region": "関西" },
-  { "word": "だいじょぶだっぺ", "meaning": "大丈夫", "region": "茨城" },
-  { "word": "おったまげる", "meaning": "びっくりする", "region": "全国" },
-  { "word": "べっぴん", "meaning": "美人", "region": "関西" },
-  { "word": "やっさもっさ", "meaning": "ごちゃごちゃ", "region": "九州" },
-  { "word": "きゃーる", "meaning": "かえる（帰る）", "region": "大分" },
-  { "word": "ぬくい", "meaning": "暖かい", "region": "関西" },
-  { "word": "ばさら", "meaning": "派手、豪快", "region": "徳島" },
-  { "word": "せこい", "meaning": "けち", "region": "関西" },
-  { "word": "ちゃー", "meaning": "お茶", "region": "沖縄" },
-  { "word": "なんくるないさ", "meaning": "なんとかなる", "region": "沖縄" },
-  { "word": "はいたい", "meaning": "こんにちは（女性）", "region": "沖縄" },
-  { "word": "めんそーれ", "meaning": "いらっしゃい", "region": "沖縄" },
-  { "word": "でーじ", "meaning": "とても", "region": "沖縄" },
-  { "word": "あぎじゃびよい", "meaning": "びっくりした", "region": "沖縄" },
-  { "word": "しに", "meaning": "とても", "region": "沖縄" },
-  { "word": "ゆくさ", "meaning": "ありがとう", "region": "沖縄" },
-  { "word": "かりゆし", "meaning": "めでたい", "region": "沖縄" },
-  { "word": "がじゃん", "meaning": "蚊", "region": "沖縄" },
-  { "word": "いちゃりばちょーでー", "meaning": "一度会えば皆兄弟", "region": "沖縄" },
-  { "word": "すんさー", "meaning": "恥ずかしい", "region": "沖縄" },
-  { "word": "あばさー", "meaning": "ハリセンボン（魚）", "region": "沖縄" },
-  { "word": "くゎっちーさびら", "meaning": "いただきます", "region": "沖縄" },
-  { "word": "ちゅらかーぎー", "meaning": "美人", "region": "沖縄" },
-  { "word": "たっぴらかす", "meaning": "散らかす", "region": "秋田" },
-  { "word": "へば", "meaning": "じゃあね", "region": "青森" },
-  { "word": "こわい", "meaning": "固い（東北弁）", "region": "東北" }
+  {
+    "word": "おっぺす",
+    "meaning": "押す",
+    "region": "北海道"
+  },
+  {
+    "word": "わや",
+    "meaning": "めちゃくちゃ、だめ",
+    "region": "北海道"
+  },
+  {
+    "word": "なまら",
+    "meaning": "とても",
+    "region": "北海道"
+  },
+  {
+    "word": "しゃっこい",
+    "meaning": "冷たい",
+    "region": "東北"
+  },
+  {
+    "word": "いずい",
+    "meaning": "しっくりこない、違和感がある",
+    "region": "東北"
+  },
+  {
+    "word": "けっぱれ",
+    "meaning": "がんばれ",
+    "region": "青森"
+  },
+  {
+    "word": "だっちゃ",
+    "meaning": "〜だよ（語尾につける）",
+    "region": "宮城"
+  },
+  {
+    "word": "あおなじみ",
+    "meaning": "青あざ",
+    "region": "秋田"
+  },
+  {
+    "word": "うるかす",
+    "meaning": "水につけてふやかす",
+    "region": "岩手"
+  },
+  {
+    "word": "こわい",
+    "meaning": "疲れた",
+    "region": "山形"
+  },
+  {
+    "word": "じょんだ",
+    "meaning": "上手だ",
+    "region": "青森"
+  },
+  {
+    "word": "だはんで",
+    "meaning": "だから",
+    "region": "青森"
+  },
+  {
+    "word": "おばんです",
+    "meaning": "こんばんは",
+    "region": "宮城"
+  },
+  {
+    "word": "ごじゃっぺ",
+    "meaning": "でたらめ",
+    "region": "茨城"
+  },
+  {
+    "word": "だいじ",
+    "meaning": "大丈夫",
+    "region": "栃木"
+  },
+  {
+    "word": "おっぺす",
+    "meaning": "押す",
+    "region": "福島"
+  },
+  {
+    "word": "いけず",
+    "meaning": "意地悪",
+    "region": "京都"
+  },
+  {
+    "word": "えらい",
+    "meaning": "しんどい",
+    "region": "関西"
+  },
+  {
+    "word": "さら",
+    "meaning": "新品",
+    "region": "関西"
+  },
+  {
+    "word": "つきだす",
+    "meaning": "追い出す",
+    "region": "大阪"
+  },
+  {
+    "word": "ほんま",
+    "meaning": "本当",
+    "region": "関西"
+  },
+  {
+    "word": "めばちこ",
+    "meaning": "ものもらい",
+    "region": "大阪"
+  },
+  {
+    "word": "ちょける",
+    "meaning": "ふざける",
+    "region": "関西"
+  },
+  {
+    "word": "しゃあない",
+    "meaning": "仕方ない",
+    "region": "関西"
+  },
+  {
+    "word": "やにこい",
+    "meaning": "しつこい",
+    "region": "和歌山"
+  },
+  {
+    "word": "ねぶる",
+    "meaning": "なめる",
+    "region": "関西"
+  },
+  {
+    "word": "ちんちん",
+    "meaning": "熱々",
+    "region": "名古屋"
+  },
+  {
+    "word": "どえりゃあ",
+    "meaning": "とても",
+    "region": "名古屋"
+  },
+  {
+    "word": "たわけ",
+    "meaning": "ばかもの",
+    "region": "名古屋"
+  },
+  {
+    "word": "やっとかめ",
+    "meaning": "ひさしぶり",
+    "region": "名古屋"
+  },
+  {
+    "word": "机をつる",
+    "meaning": "机を運ぶ",
+    "region": "名古屋"
+  },
+  {
+    "word": "かしわ",
+    "meaning": "鶏肉",
+    "region": "名古屋"
+  },
+  {
+    "word": "おみゃあ",
+    "meaning": "あなた",
+    "region": "名古屋"
+  },
+  {
+    "word": "えらいこっちゃ",
+    "meaning": "大変だ",
+    "region": "関西"
+  },
+  {
+    "word": "だんだん",
+    "meaning": "ありがとう",
+    "region": "島根"
+  },
+  {
+    "word": "ぶち",
+    "meaning": "とても",
+    "region": "広島"
+  },
+  {
+    "word": "たいぎい",
+    "meaning": "だるい、面倒",
+    "region": "広島"
+  },
+  {
+    "word": "じゃけぇ",
+    "meaning": "だから",
+    "region": "広島"
+  },
+  {
+    "word": "ぶちしわい",
+    "meaning": "しつこい",
+    "region": "広島"
+  },
+  {
+    "word": "はぶてる",
+    "meaning": "すねる",
+    "region": "広島"
+  },
+  {
+    "word": "いけん",
+    "meaning": "だめ",
+    "region": "広島"
+  },
+  {
+    "word": "おおきに",
+    "meaning": "ありがとう",
+    "region": "京都"
+  },
+  {
+    "word": "とっとーと？",
+    "meaning": "取ってるの？",
+    "region": "福岡"
+  },
+  {
+    "word": "好いとう",
+    "meaning": "好き",
+    "region": "福岡"
+  },
+  {
+    "word": "なんしよーと？",
+    "meaning": "何してるの？",
+    "region": "福岡"
+  },
+  {
+    "word": "ばり",
+    "meaning": "とても",
+    "region": "福岡"
+  },
+  {
+    "word": "きなっせ",
+    "meaning": "いらっしゃい",
+    "region": "熊本"
+  },
+  {
+    "word": "よか",
+    "meaning": "いい",
+    "region": "福岡"
+  },
+  {
+    "word": "せからしか",
+    "meaning": "うるさい",
+    "region": "長崎"
+  },
+  {
+    "word": "どんくさい",
+    "meaning": "のろい",
+    "region": "九州"
+  },
+  {
+    "word": "しょわしない",
+    "meaning": "落ち着かない",
+    "region": "鹿児島"
+  },
+  {
+    "word": "わっぜ",
+    "meaning": "とても",
+    "region": "鹿児島"
+  },
+  {
+    "word": "ひだるい",
+    "meaning": "お腹がすいた",
+    "region": "鹿児島"
+  },
+  {
+    "word": "けん",
+    "meaning": "だから",
+    "region": "福岡"
+  },
+  {
+    "word": "しんけん",
+    "meaning": "とても",
+    "region": "大分"
+  },
+  {
+    "word": "よだきい",
+    "meaning": "めんどうくさい",
+    "region": "大分"
+  },
+  {
+    "word": "いぬ",
+    "meaning": "帰る",
+    "region": "九州"
+  },
+  {
+    "word": "あずましい",
+    "meaning": "落ち着く",
+    "region": "北海道"
+  },
+  {
+    "word": "まいど",
+    "meaning": "こんにちは、ありがとう",
+    "region": "関西"
+  },
+  {
+    "word": "ほんなら",
+    "meaning": "それじゃあ",
+    "region": "関西"
+  },
+  {
+    "word": "ちかっぱ",
+    "meaning": "めいっぱい",
+    "region": "福岡"
+  },
+  {
+    "word": "どんだんず",
+    "meaning": "どうして",
+    "region": "青森"
+  },
+  {
+    "word": "おだつ",
+    "meaning": "調子に乗る",
+    "region": "北海道"
+  },
+  {
+    "word": "つんつるてん",
+    "meaning": "丈が短すぎる服",
+    "region": "全国"
+  },
+  {
+    "word": "こてんぱん",
+    "meaning": "徹底的にやられる",
+    "region": "全国"
+  },
+  {
+    "word": "わっしょい",
+    "meaning": "祭りのかけ声",
+    "region": "全国"
+  },
+  {
+    "word": "ひゃっこい",
+    "meaning": "冷たい",
+    "region": "新潟"
+  },
+  {
+    "word": "おもしゃい",
+    "meaning": "面白い",
+    "region": "新潟"
+  },
+  {
+    "word": "あっぱとっぱ",
+    "meaning": "でたらめ",
+    "region": "熊本"
+  },
+  {
+    "word": "おおごと",
+    "meaning": "大変",
+    "region": "九州"
+  },
+  {
+    "word": "がばい",
+    "meaning": "とても",
+    "region": "佐賀"
+  },
+  {
+    "word": "わっぜか",
+    "meaning": "すごい",
+    "region": "鹿児島"
+  },
+  {
+    "word": "きびる",
+    "meaning": "しばる",
+    "region": "九州"
+  },
+  {
+    "word": "はよせんね",
+    "meaning": "早くしなさい",
+    "region": "福岡"
+  },
+  {
+    "word": "ちゃちゃ入れる",
+    "meaning": "横から口出しする",
+    "region": "関西"
+  },
+  {
+    "word": "だいじょぶだっぺ",
+    "meaning": "大丈夫",
+    "region": "茨城"
+  },
+  {
+    "word": "おったまげる",
+    "meaning": "びっくりする",
+    "region": "全国"
+  },
+  {
+    "word": "べっぴん",
+    "meaning": "美人",
+    "region": "関西"
+  },
+  {
+    "word": "やっさもっさ",
+    "meaning": "ごちゃごちゃ",
+    "region": "九州"
+  },
+  {
+    "word": "きゃーる",
+    "meaning": "かえる（帰る）",
+    "region": "大分"
+  },
+  {
+    "word": "ぬくい",
+    "meaning": "暖かい",
+    "region": "関西"
+  },
+  {
+    "word": "ばさら",
+    "meaning": "派手、豪快",
+    "region": "徳島"
+  },
+  {
+    "word": "せこい",
+    "meaning": "けち",
+    "region": "関西"
+  },
+  {
+    "word": "ちゃー",
+    "meaning": "お茶",
+    "region": "沖縄"
+  },
+  {
+    "word": "なんくるないさ",
+    "meaning": "なんとかなる",
+    "region": "沖縄"
+  },
+  {
+    "word": "はいたい",
+    "meaning": "こんにちは（女性）",
+    "region": "沖縄"
+  },
+  {
+    "word": "めんそーれ",
+    "meaning": "いらっしゃい",
+    "region": "沖縄"
+  },
+  {
+    "word": "でーじ",
+    "meaning": "とても",
+    "region": "沖縄"
+  },
+  {
+    "word": "あぎじゃびよい",
+    "meaning": "びっくりした",
+    "region": "沖縄"
+  },
+  {
+    "word": "しに",
+    "meaning": "とても",
+    "region": "沖縄"
+  },
+  {
+    "word": "ゆくさ",
+    "meaning": "ありがとう",
+    "region": "沖縄"
+  },
+  {
+    "word": "かりゆし",
+    "meaning": "めでたい",
+    "region": "沖縄"
+  },
+  {
+    "word": "がじゃん",
+    "meaning": "蚊",
+    "region": "沖縄"
+  },
+  {
+    "word": "いちゃりばちょーでー",
+    "meaning": "一度会えば皆兄弟",
+    "region": "沖縄"
+  },
+  {
+    "word": "すんさー",
+    "meaning": "恥ずかしい",
+    "region": "沖縄"
+  },
+  {
+    "word": "あばさー",
+    "meaning": "ハリセンボン（魚）",
+    "region": "沖縄"
+  },
+  {
+    "word": "くゎっちーさびら",
+    "meaning": "いただきます",
+    "region": "沖縄"
+  },
+  {
+    "word": "ちゅらかーぎー",
+    "meaning": "美人",
+    "region": "沖縄"
+  },
+  {
+    "word": "たっぴらかす",
+    "meaning": "散らかす",
+    "region": "秋田"
+  },
+  {
+    "word": "へば",
+    "meaning": "じゃあね",
+    "region": "青森"
+  },
+  {
+    "word": "こわい",
+    "meaning": "固い（東北弁）",
+    "region": "東北"
+  }
 ]
