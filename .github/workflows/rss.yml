@@ -2,7 +2,7 @@ name: Post dialect to X
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/30 * * * *"   # 30分ごと（UTC基準）
   workflow_dispatch: {}
 
 permissions:
@@ -29,50 +29,40 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 1) 会話文を生成して在庫を移動
+      # 1) 会話文を生成して在庫を移動（post.txt を出しつつ、出力を steps.gen.outputs.POST_BODY に渡す）
       - name: Generate post & move item
         id: gen
         shell: bash
         run: |
           set -euo pipefail
           node generate_and_move.mjs > post.txt
+          echo "Generated:"
+          cat post.txt
           {
             echo "POST_BODY<<EOF"
             cat post.txt
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-          echo "Generated:"
-          cat post.txt
 
-      # 2) X に投稿（index.mjs は process.env.POST_BODY を読む想定）
+      # 2) X に投稿（成功マーカー "Tweet OK:" を強制チェック）
       - name: Run bot (post to X)
         if: ${{ steps.gen.outputs.POST_BODY != '' }}
         env:
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_SECRET: ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_API_KEY:       ${{ secrets.X_API_KEY }}
+          X_API_SECRET:    ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN:  ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-          POST_BODY: ${{ steps.gen.outputs.POST_BODY }}
+          POST_BODY:       ${{ steps.gen.outputs.POST_BODY }}
         run: |
           set -euo pipefail
-          node -e "
-            const { TwitterApi } = require('twitter-api-v2');
-            const client = new TwitterApi({
-              appKey: process.env.X_API_KEY,
-              appSecret: process.env.X_API_SECRET,
-              accessToken: process.env.X_ACCESS_TOKEN,
-              accessSecret: process.env.X_ACCESS_SECRET,
-            });
-            (async () => {
-              const me = await client.v2.me();
-              console.log('Posting as @' + me.data.username);
-            })().catch(e => { console.error(e); process.exit(1); });
-          "
-          node index.mjs
+          node index.mjs | tee post.log
+          # 成功マーカーがなければ失敗扱い
+          grep -q "Tweet OK:" post.log
 
-      # 3) 在庫移動などの変更をコミット
+      # 3) 在庫移動などの変更をコミット（投稿失敗時はここに来ない）
       - name: Commit moved/posted changes
         run: |
+          set -euo pipefail
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A

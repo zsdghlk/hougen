@@ -1,36 +1,58 @@
-// index.mjs — dialects/*.json からランダムに1件選んで投稿文を生成
-import fs from "node:fs";
-import path from "node:path";
+// index.mjs
+// 依存: twitter-api-v2（package.json に "twitter-api-v2" が入っている想定）
+import { TwitterApi } from 'twitter-api-v2';
 
-const DIALECTS_DIR = path.join(process.cwd(), "dialects");
+function req(name) {
+  const v = process.env[name];
+  if (!v || !String(v).trim()) {
+    console.error(`ENV missing: ${name}`);
+    process.exit(1);
+  }
+  return v.trim();
+}
 
-function pickRandomDialect() {
-  // dialects/ 以下の .json を列挙（1ファイルでもOK）
-  const files = fs.readdirSync(DIALECTS_DIR).filter(f => f.endsWith(".json"));
-  if (files.length === 0) {
-    throw new Error("No source files in ./dialects");
+async function main() {
+  const appKey       = req('X_API_KEY');
+  const appSecret    = req('X_API_SECRET');
+  const accessToken  = req('X_ACCESS_TOKEN');
+  const accessSecret = req('X_ACCESS_SECRET');
+  const bodyRaw      = req('POST_BODY');
+
+  const body = bodyRaw.trim();
+  if (!body) {
+    console.error('POST_BODY is empty after trim');
+    process.exit(1);
   }
 
-  // ランダムにファイルを選ぶ
-  const file = path.join(DIALECTS_DIR, files[Math.floor(Math.random() * files.length)]);
-  const data = JSON.parse(fs.readFileSync(file, "utf8"));
+  const client = new TwitterApi({
+    appKey,
+    appSecret,
+    accessToken,
+    accessSecret,
+  });
 
-  if (!Array.isArray(data) || data.length === 0) {
-    throw new Error(`No entries in ${file}`);
+  try {
+    const me = await client.v2.me();
+    console.log(`Posting as @${me.data.username}`);
+    console.log(body);
+
+    // v2Tweet
+    const res = await client.v2.tweet({ text: body });
+
+    if (!res?.data?.id) {
+      console.error('Tweet response has no id:', JSON.stringify(res, null, 2));
+      process.exit(1);
+    }
+
+    const url = `https://x.com/${me.data.username}/status/${res.data.id}`;
+    console.log('Tweet OK:', res.data.id, url);
+    // 正常終了
+  } catch (err) {
+    // twitter-api-v2 は err.data / err.errors に詳細が入ることが多い
+    const detail = err?.data ?? err?.errors ?? err?.message ?? err;
+    console.error('Tweet FAILED:', JSON.stringify(detail, null, 2));
+    process.exit(1);
   }
-
-  // レコードもランダムに1件
-  return data[Math.floor(Math.random() * data.length)];
 }
 
-export function buildPost() {
-  const { word, meaning, region } = pickRandomDialect();
-  return `👩「この言葉わかる？」👨「${word}？」 👉 ${region}弁で『${meaning}』`;
-}
-
-// GitHub Actions では POST_BODY を優先、ローカルは自動生成
-if (process.env.POST_BODY) {
-  console.log(process.env.POST_BODY.trim());
-} else {
-  console.log(buildPost());
-}
+main();

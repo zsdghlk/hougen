@@ -1,0 +1,167 @@
+[1mdiff --git a/.github/workflows/rss.yml b/.github/workflows/rss.yml[m
+[1mindex 5b2fc04..08d3287 100644[m
+[1m--- a/.github/workflows/rss.yml[m
+[1m+++ b/.github/workflows/rss.yml[m
+[36m@@ -2,7 +2,7 @@[m [mname: Post dialect to X[m
+ [m
+ on:[m
+   schedule:[m
+[31m-    - cron: "*/30 * * * *"[m
+[32m+[m[32m    - cron: "*/30 * * * *"   # 30分ごと（UTC基準）[m
+   workflow_dispatch: {}[m
+ [m
+ permissions:[m
+[36m@@ -29,50 +29,40 @@[m [mjobs:[m
+       - name: Install dependencies[m
+         run: npm ci[m
+ [m
+[31m-      # 1) 会話文を生成して在庫を移動[m
+[32m+[m[32m      # 1) 会話文を生成して在庫を移動（post.txt を出しつつ、出力を steps.gen.outputs.POST_BODY に渡す）[m
+       - name: Generate post & move item[m
+         id: gen[m
+         shell: bash[m
+         run: |[m
+           set -euo pipefail[m
+           node generate_and_move.mjs > post.txt[m
+[32m+[m[32m          echo "Generated:"[m
+[32m+[m[32m          cat post.txt[m
+           {[m
+             echo "POST_BODY<<EOF"[m
+             cat post.txt[m
+             echo "EOF"[m
+           } >> "$GITHUB_OUTPUT"[m
+[31m-          echo "Generated:"[m
+[31m-          cat post.txt[m
+ [m
+[31m-      # 2) X に投稿（index.mjs は process.env.POST_BODY を読む想定）[m
+[32m+[m[32m      # 2) X に投稿（成功マーカー "Tweet OK:" を強制チェック）[m
+       - name: Run bot (post to X)[m
+         if: ${{ steps.gen.outputs.POST_BODY != '' }}[m
+         env:[m
+[31m-          X_API_KEY: ${{ secrets.X_API_KEY }}[m
+[31m-          X_API_SECRET: ${{ secrets.X_API_SECRET }}[m
+[31m-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}[m
+[32m+[m[32m          X_API_KEY:       ${{ secrets.X_API_KEY }}[m
+[32m+[m[32m          X_API_SECRET:    ${{ secrets.X_API_SECRET }}[m
+[32m+[m[32m          X_ACCESS_TOKEN:  ${{ secrets.X_ACCESS_TOKEN }}[m
+           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}[m
+[31m-          POST_BODY: ${{ steps.gen.outputs.POST_BODY }}[m
+[32m+[m[32m          POST_BODY:       ${{ steps.gen.outputs.POST_BODY }}[m
+         run: |[m
+           set -euo pipefail[m
+[31m-          node -e "[m
+[31m-            const { TwitterApi } = require('twitter-api-v2');[m
+[31m-            const client = new TwitterApi({[m
+[31m-              appKey: process.env.X_API_KEY,[m
+[31m-              appSecret: process.env.X_API_SECRET,[m
+[31m-              accessToken: process.env.X_ACCESS_TOKEN,[m
+[31m-              accessSecret: process.env.X_ACCESS_SECRET,[m
+[31m-            });[m
+[31m-            (async () => {[m
+[31m-              const me = await client.v2.me();[m
+[31m-              console.log('Posting as @' + me.data.username);[m
+[31m-            })().catch(e => { console.error(e); process.exit(1); });[m
+[31m-          "[m
+[31m-          node index.mjs[m
+[32m+[m[32m          node index.mjs | tee post.log[m
+[32m+[m[32m          # 成功マーカーがなければ失敗扱い[m
+[32m+[m[32m          grep -q "Tweet OK:" post.log[m
+ [m
+[31m-      # 3) 在庫移動などの変更をコミット[m
+[32m+[m[32m      # 3) 在庫移動などの変更をコミット（投稿失敗時はここに来ない）[m
+       - name: Commit moved/posted changes[m
+         run: |[m
+[32m+[m[32m          set -euo pipefail[m
+           git config --local user.email "action@github.com"[m
+           git config --local user.name "GitHub Action"[m
+           git add -A[m
+[1mdiff --git a/index.mjs b/index.mjs[m
+[1mindex 026bbcc..025e25e 100644[m
+[1m--- a/index.mjs[m
+[1m+++ b/index.mjs[m
+[36m@@ -1,36 +1,58 @@[m
+[31m-// index.mjs — dialects/*.json からランダムに1件選んで投稿文を生成[m
+[31m-import fs from "node:fs";[m
+[31m-import path from "node:path";[m
+[32m+[m[32m// index.mjs[m
+[32m+[m[32m// 依存: twitter-api-v2（package.json に "twitter-api-v2" が入っている想定）[m
+[32m+[m[32mimport { TwitterApi } from 'twitter-api-v2';[m
+ [m
+[31m-const DIALECTS_DIR = path.join(process.cwd(), "dialects");[m
+[31m-[m
+[31m-function pickRandomDialect() {[m
+[31m-  // dialects/ 以下の .json を列挙（1ファイルでもOK）[m
+[31m-  const files = fs.readdirSync(DIALECTS_DIR).filter(f => f.endsWith(".json"));[m
+[31m-  if (files.length === 0) {[m
+[31m-    throw new Error("No source files in ./dialects");[m
+[32m+[m[32mfunction req(name) {[m
+[32m+[m[32m  const v = process.env[name];[m
+[32m+[m[32m  if (!v || !String(v).trim()) {[m
+[32m+[m[32m    console.error(`ENV missing: ${name}`);[m
+[32m+[m[32m    process.exit(1);[m
+   }[m
+[32m+[m[32m  return v.trim();[m
+[32m+[m[32m}[m
+ [m
+[31m-  // ランダムにファイルを選ぶ[m
+[31m-  const file = path.join(DIALECTS_DIR, files[Math.floor(Math.random() * files.length)]);[m
+[31m-  const data = JSON.parse(fs.readFileSync(file, "utf8"));[m
+[32m+[m[32masync function main() {[m
+[32m+[m[32m  const appKey       = req('X_API_KEY');[m
+[32m+[m[32m  const appSecret    = req('X_API_SECRET');[m
+[32m+[m[32m  const accessToken  = req('X_ACCESS_TOKEN');[m
+[32m+[m[32m  const accessSecret = req('X_ACCESS_SECRET');[m
+[32m+[m[32m  const bodyRaw      = req('POST_BODY');[m
+ [m
+[31m-  if (!Array.isArray(data) || data.length === 0) {[m
+[31m-    throw new Error(`No entries in ${file}`);[m
+[32m+[m[32m  const body = bodyRaw.trim();[m
+[32m+[m[32m  if (!body) {[m
+[32m+[m[32m    console.error('POST_BODY is empty after trim');[m
+[32m+[m[32m    process.exit(1);[m
+   }[m
+ [m
+[31m-  // レコードもランダムに1件[m
+[31m-  return data[Math.floor(Math.random() * data.length)];[m
+[31m-}[m
+[32m+[m[32m  const client = new TwitterApi({[m
+[32m+[m[32m    appKey,[m
+[32m+[m[32m    appSecret,[m
+[32m+[m[32m    accessToken,[m
+[32m+[m[32m    accessSecret,[m
+[32m+[m[32m  });[m
+ [m
+[31m-export function buildPost() {[m
+[31m-  const { word, meaning, region } = pickRandomDialect();[m
+[31m-  return `👩「この言葉わかる？」👨「${word}？」 👉 ${region}弁で『${meaning}』`;[m
+[31m-}[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const me = await client.v2.me();[m
+[32m+[m[32m    console.log(`Posting as @${me.data.username}`);[m
+[32m+[m[32m    console.log(body);[m
+ [m
+[31m-// GitHub Actions では POST_BODY を優先、ローカルは自動生成[m
+[31m-if (process.env.POST_BODY) {[m
+[31m-  console.log(process.env.POST_BODY.trim());[m
+[31m-} else {[m
+[31m-  console.log(buildPost());[m
+[32m+[m[32m    // v2Tweet[m
+[32m+[m[32m    const res = await client.v2.tweet({ text: body });[m
+[32m+[m
+[32m+[m[32m    if (!res?.data?.id) {[m
+[32m+[m[32m      console.error('Tweet response has no id:', JSON.stringify(res, null, 2));[m
+[32m+[m[32m      process.exit(1);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    const url = `https://x.com/${me.data.username}/status/${res.data.id}`;[m
+[32m+[m[32m    console.log('Tweet OK:', res.data.id, url);[m
+[32m+[m[32m    // 正常終了[m
+[32m+[m[32m  } catch (err) {[m
+[32m+[m[32m    // twitter-api-v2 は err.data / err.errors に詳細が入ることが多い[m
+[32m+[m[32m    const detail = err?.data ?? err?.errors ?? err?.message ?? err;[m
+[32m+[m[32m    console.error('Tweet FAILED:', JSON.stringify(detail, null, 2));[m
+[32m+[m[32m    process.exit(1);[m
+[32m+[m[32m  }[m
+ }[m
+[32m+[m
+[32m+[m[32mmain();[m
